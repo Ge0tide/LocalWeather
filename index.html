@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Weather | Today</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/index.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function () {
+                
+
+                if ("geolocation" in navigator) 
+                {
+                    navigator.geolocation.getCurrentPosition(
+                    function success(position) 
+                    {
+                        var degreesChar = String.fromCharCode(176);
+
+                        var city = document.querySelector("#city");
+                        var temp = document.querySelector("#temp");
+                        var desc = document.querySelector("#desc");
+                        var img = document.querySelector("#image");
+                        var dataRet = undefined;
+                        var url = "http://api.openweathermap.org/data/2.5/weather?lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&units=metric&&APPID=eb134afe13a2cf6f0606f3680170305c";
+                        
+                        $.getJSON(url, function (data) {
+                            let wDescMain = data["weather"][0].main;
+
+                            city.innerText = data["name"];
+                            temp.innerText = "Average: " + data["main"].temp + degreesChar + "C Min: " + data["main"].temp_min + degreesChar + "C Max: " + data["main"].temp_max + degreesChar + "C";
+                            desc.innerText = wDescMain + " - " + data["weather"][0].description;
+
+                            if (wDescMain.toLowerCase() == "clouds" || wDescMain.toLowerCase() == "cloudy")
+                            {
+                                img.src = "images/cloudy.png";
+                            }
+                            else if (wDescMain.toLowerCase() == "sun" || wDescMain.toLowerCase() == "sunny")
+                            {
+                                img.src = "images/sunny.png";
+                            }
+                            else if (wDescMain.toLowerCase() == "rain" || wDescMain.toLowerCase() == "rainy")
+                            {
+                                img.src = "images/rainy.png";
+                            }
+                        }); 
+                    },
+                    
+                    function error(error_message) 
+                    {
+                        console.error('An error has occured while retrieving location', error_message);
+                    }  
+                    );
+                } 
+                else 
+                {
+                    alert("Please enable geolocation in your browser");
+                }
+            });
+        </script>
+    </head>
+    <body>
+        
+        <div class="page-data" style="position: relative;">
+            <h1>Weather Information</h1>
+            <img id="image" src="#" alt="Image"/>
+            <div class="text">
+                <p>City - <span id="city"></span></p>
+                <p>Temperature - <span id="temp"></span></p>
+                <p>Weather Description - <span id="desc"></span></p>
+            </div>
+        </div>
+    </body>
+</html>
